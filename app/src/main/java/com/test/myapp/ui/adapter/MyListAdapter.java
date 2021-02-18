@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.myapp.R;
 import com.test.myapp.callback.OnItemClickListener;
+import com.test.myapp.data.model.Datum;
 import com.test.myapp.data.model.User;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder> {
 
-    private List<User.Datum> userList;
+    private List<Datum> userList;
     private OnItemClickListener clickListener;
 
     public MyListAdapter(){
@@ -40,7 +41,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        User.Datum datum = userList.get(position);
+        Datum datum = userList.get(position);
         holder.username.setText(datum.getFirstName()+" "+datum.getLastName());
         holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +56,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         return userList.size();
     }
 
-    public void setUserList(List<User.Datum> userList){
+    public void setUserList(List<Datum> userList){
         this.userList = userList;
         notifyDataSetChanged();
     }

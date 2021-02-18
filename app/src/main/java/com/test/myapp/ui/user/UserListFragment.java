@@ -2,6 +2,7 @@ package com.test.myapp.ui.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.myapp.R;
 import com.test.myapp.callback.OnItemClickListener;
+import com.test.myapp.data.model.Datum;
 import com.test.myapp.data.model.User;
+import com.test.myapp.database.AppExecutors;
+import com.test.myapp.database.UserDatabase;
 import com.test.myapp.databinding.FragmentListBinding;
 import com.test.myapp.dialog.CommonDialog;
 import com.test.myapp.dialog.OnDialogButtonsClick;
@@ -37,8 +41,8 @@ public class UserListFragment extends Fragment {
     FragmentListBinding fragmentListBinding;
     private UserListViewModel userListViewModel;
     private MyListAdapter adapter;
-    private ArrayList<User.Datum> list;
-
+    private List<Datum> list;
+    private int i = 236548;
 
     @Nullable
     @Override
@@ -85,7 +89,15 @@ public class UserListFragment extends Fragment {
             }
         });
 
-        userListViewModel.callGetUserApi("").observe(new LifecycleOwner() {
+        fragmentListBinding.addValue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                i++;
+                userListViewModel.insertUser(new Datum(i,"abc@gmail.com","Shubham","Bangur",""));
+            }
+        });
+
+        /*userListViewModel.callGetUserApi("").observe(new LifecycleOwner() {
             @NonNull
             @Override
             public Lifecycle getLifecycle() {
@@ -95,9 +107,13 @@ public class UserListFragment extends Fragment {
             @Override
             public void onChanged(User users) {
                 for(int i=0;i<users.getData().size();i++){
+                    Datum datum = new Datum(users.getData().get(i).getId(),users.getData().get(i).getEmail(),
+                            users.getData().get(i).getFirstName(),users.getData().get(i).getLastName()
+                            ,users.getData().get(i).getAvatar());
                     String fullName = users.getData().get(i).getFirstName()+" "+users.getData().get(i).getLastName();
                     int vowels = 0;
                     fullName = fullName.toLowerCase();
+
                     for(int j=0;j<fullName.length();j++){
                         char ch = fullName.charAt(j);
 
@@ -111,7 +127,20 @@ public class UserListFragment extends Fragment {
                     }
                 }
                 fragmentListBinding.totalCount.setText("Total User: "+list.size());
-                adapter.setUserList(list);
+
+            }
+        });*/
+
+        userListViewModel.getUserList().observe(new LifecycleOwner() {
+            @NonNull
+            @Override
+            public Lifecycle getLifecycle() {
+                return UserListFragment.this.getLifecycle();
+            }
+        }, new Observer<List<Datum>>() {
+            @Override
+            public void onChanged(List<Datum> data) {
+                adapter.setUserList(data);
             }
         });
 

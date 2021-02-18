@@ -1,12 +1,19 @@
 package com.test.myapp.ui.user;
 
+import android.app.Application;
+import android.content.Context;
+import android.service.autofill.UserData;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.test.myapp.callback.NetworkCallBack;
+import com.test.myapp.data.model.Datum;
 import com.test.myapp.data.model.Login;
 import com.test.myapp.data.model.User;
+import com.test.myapp.database.UserDatabase;
 import com.test.myapp.network.NoConnectivityException;
 import com.test.myapp.network.RetrofitClient;
 
@@ -20,10 +27,12 @@ public class UserListRepository {
     private NetworkCallBack networkCallBack;
     private MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
     private static UserListRepository userRepository = null;
+    private static Application mApplication;
 
-    public static UserListRepository getInstance(){
+    public static UserListRepository getInstance(Application application){
         if(userRepository == null){
             userRepository = new UserListRepository();
+            mApplication = application;
         }
         return userRepository;
     }
@@ -36,7 +45,7 @@ public class UserListRepository {
         mUserCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Log.e("onResponse",response.body().toString());
+                Log.e("onResponse", String.valueOf(response.body()));
                 userMutableLiveData.setValue(response.body());
                 networkCallBack.onNetworkResponse();
             }
@@ -51,5 +60,18 @@ public class UserListRepository {
             }
         });
         return userMutableLiveData;
+    }
+
+    public LiveData<List<Datum>> getUserList(){
+        return UserDatabase.getInstance(mApplication).userDao().getUserList();
+    }
+
+    public void insertUserData(Datum datum){
+        UserDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                UserDatabase.getInstance(mApplication).userDao().insertUser(datum);
+            }
+        });
     }
 }

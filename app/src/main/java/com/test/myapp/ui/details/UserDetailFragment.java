@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.test.myapp.R;
+import com.test.myapp.data.model.Datum;
 import com.test.myapp.data.model.User;
 import com.test.myapp.databinding.FragmentDetailsBinding;
 import com.test.myapp.ui.user.UserListFragment;
@@ -19,9 +20,9 @@ import com.test.myapp.ui.user.UserListFragment;
 public class UserDetailFragment extends Fragment {
 
     FragmentDetailsBinding detailsBinding;
-    private User.Datum datum;
+    private Datum datum;
 
-    public UserDetailFragment(User.Datum datum) {
+    public UserDetailFragment(Datum datum) {
         this.datum = datum;
     }
 
